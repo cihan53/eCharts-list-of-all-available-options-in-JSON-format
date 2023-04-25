@@ -32,7 +32,7 @@ const toSchema = (obj: any, index: number | undefined | null = null) => {
     let defaultValue = undefined;
     switch (type) {
         case 'object':
-            schema[_obj.prop] = {properties: {}}
+            schema[_obj.prop] = Object.assign(schema[_obj.prop],{properties: {}})
             break;
         case 'color':
             type = "string"
@@ -53,13 +53,11 @@ const toSchema = (obj: any, index: number | undefined | null = null) => {
 
 
             if (properties == "properties") {
-                // console.log(_item)
                 let properties = item.properties.reduce(function (res1: any, item1: any) {
                     let key = Object.keys(item1)[0]; //first property: a, b, c
                     res1[key] = item1[key];
                     return res1;
                 })
-
                 result[key] = {
                     type,
                     properties
@@ -80,8 +78,6 @@ const toSchema = (obj: any, index: number | undefined | null = null) => {
             schema[obj.prop].type = "array"
             schema[obj.prop].items = child
         }
-
-
     }
 
     return schema
