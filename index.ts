@@ -29,19 +29,6 @@ const toSchema = (obj: any, index: number | undefined | null = null) => {
         }
     }
 
-    let defaultValue = undefined;
-    switch (type) {
-        case 'object':
-            schema[_obj.prop] = Object.assign(schema[_obj.prop],{properties: {}})
-            break;
-        case 'color':
-            type = "string"
-            break;
-        case 'number':
-            defaultValue = !isNaN(Number(_obj.default)) ? Number(_obj.default) : undefined
-            break
-    }
-
 
     if (_obj.children) {
         let child = _obj.children.map((item: any, index: number) => {
@@ -71,13 +58,28 @@ const toSchema = (obj: any, index: number | undefined | null = null) => {
         }, {});
 
 
-        if (obj.isObject)
+        if (obj.isObject) {
             schema[obj.prop].properties = child
 
-        if (obj.isArray) {
+        } else if (obj.isArray) {
             schema[obj.prop].type = "array"
             schema[obj.prop].items = child
         }
+    } else {
+
+        let defaultValue = undefined;
+        switch (type) {
+            case 'object':
+            case 'color':
+                schema[obj.prop].type = "string"
+                break;
+            case 'number':
+                defaultValue = !isNaN(Number(_obj.default)) ? Number(_obj.default) : undefined
+                break
+        }
+
+        schema[obj.prop].defaultValue = defaultValue
+
     }
 
     return schema
